@@ -9,7 +9,7 @@ if (!isset($_SESSION['login'])) {
 }
 
 // Cek apakah user adalah admin
-if ($_SESSION['level'] != 'admin') {
+if ($_SESSION['role'] != 'admin') {
     header("Location: dashboard.php");
     exit;
 }
@@ -113,7 +113,7 @@ $total_pages = ceil($total_records / $limit);
                 </form>
             </div>
             
-            <div class="table-responsive">
+            <div class="reservation-table">
                 <table class="data-table">
                     <thead>
                         <tr>

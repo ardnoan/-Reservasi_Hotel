@@ -9,7 +9,7 @@ if (!isset($_SESSION['login'])) {
 }
 
 // Cek apakah user adalah admin
-if ($_SESSION['level'] != 'admin') {
+if ($_SESSION['role'] != 'admin') {
     header("Location: dashboard.php");
     exit;
 }
@@ -21,7 +21,7 @@ $start = ($page - 1) * $limit;
 
 // Search functionality
 $search = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
-$level_filter = isset($_GET['level']) ? mysqli_real_escape_string($conn, $_GET['level']) : '';
+$level_filter = isset($_GET['role']) ? mysqli_real_escape_string($conn, $_GET['role']) : '';
 
 // Base query
 $query = "
@@ -128,7 +128,7 @@ $total_pages = ceil($total_records / $limit);
                 <a href="tambah_user.php" class="btn btn-success">+ Tambah Pengguna</a>
             </div>
             
-            <div class="table-responsive">
+            <div class="reservation-table">
                 <table class="data-table">
                     <thead>
                         <tr>

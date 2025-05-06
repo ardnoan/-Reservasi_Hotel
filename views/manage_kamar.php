@@ -9,7 +9,7 @@ if (!isset($_SESSION['login'])) {
 }
 
 // Cek apakah user adalah admin
-if ($_SESSION['level'] != 'admin') {
+if ($_SESSION['role'] != 'admin') {
     header("Location: dashboard.php");
     exit;
 }
@@ -144,7 +144,7 @@ $query_jenis = mysqli_query($conn, "SELECT * FROM tabel_jenis_kamar ORDER BY nam
                 <a href="manage_jenis_kamar.php" class="btn">Kelola Tipe Kamar</a>
             </div>
             
-            <div class="table-responsive">
+            <div class="reservation-table">
                 <table class="data-table">
                     <thead>
                         <tr>

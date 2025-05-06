@@ -8,11 +8,11 @@
         <div class="footer-section">
             <h3>Quick Links</h3>
             <ul>
-                <li><a href="../index.php">Home</a></li>
-                <li><a href="../views/kamar.php">Rooms</a></li>
-                <li><a href="../views/reservasi.php">Reservation</a></li>
-                <li><a href="../views/cek_reservasi.php">Check Reservation</a></li>
-                <li><a href="../views/login.php">Login</a></li>
+                <li><a href="index.php">Home</a></li>
+                <li><a href="views/kamar.php">Rooms</a></li>
+                <li><a href="views/reservasi.php">Reservation</a></li>
+                <li><a href="views/cek_reservasi.php">Check Reservation</a></li>
+                <li><a href="views/login.php">Login</a></li>
             </ul>
         </div>
         

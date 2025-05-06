@@ -8,9 +8,16 @@ if (!isset($_SESSION['login'])) {
     exit;
 }
 
+// Get user role information
+$role = $_SESSION['role'] ?? 'staff';
+$isAdmin = ($role === 'admin');
+
+// Define base URL for includes
+$base_url = '..';
+
 // Ambil data reservasi terbaru
 $query_reservasi = mysqli_query($conn, "
-    SELECT r.*, t.nama_tamu, t.email, t.no_telepon, p.status_pembayaran 
+    SELECT r.*, t.nama_tamu, t.email, t.no_telepon, p.status_pembayaran, p.id_pembayaran
     FROM tabel_reservasi r
     JOIN tabel_tamu t ON r.id_tamu = t.id_tamu
     LEFT JOIN tabel_pembayaran p ON r.id_reservasi = p.id_reservasi
@@ -32,6 +39,43 @@ while ($row = mysqli_fetch_assoc($query_status)) {
 // Hitung kamar tersedia
 $query_kamar = mysqli_query($conn, "SELECT COUNT(*) as tersedia FROM tabel_kamar WHERE status = 'tersedia'");
 $kamar_tersedia = mysqli_fetch_assoc($query_kamar)['tersedia'];
+
+// Get today's check-ins
+$today = date('Y-m-d');
+$query_checkin = mysqli_query($conn, "SELECT COUNT(*) as jumlah FROM tabel_reservasi WHERE tanggal_checkin = '$today' AND status = 'confirmed'");
+$checkin_hari_ini = mysqli_fetch_assoc($query_checkin)['jumlah'];
+
+// Handle alerts
+$alert_message = '';
+$alert_type = '';
+
+if (isset($_GET['success'])) {
+    $alert_type = 'success';
+    switch ($_GET['success']) {
+        case 'status_updated':
+            $alert_message = 'Status reservasi berhasil diperbarui!';
+            break;
+        case 'payment_updated':
+            $alert_message = 'Status pembayaran berhasil diperbarui!';
+            break;
+        default:
+            $alert_message = 'Operasi berhasil dilakukan!';
+    }
+}
+
+if (isset($_GET['error'])) {
+    $alert_type = 'error';
+    switch ($_GET['error']) {
+        case 'database':
+            $alert_message = 'Terjadi kesalahan pada database!';
+            break;
+        case 'invalid':
+            $alert_message = 'Parameter tidak valid!';
+            break;
+        default:
+            $alert_message = 'Terjadi kesalahan!';
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -40,29 +84,37 @@ $kamar_tersedia = mysqli_fetch_assoc($query_kamar)['tersedia'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Hotel Reservation System</title>
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <?php include_once '../components/navbar.php'; ?>
+    
     <div class="container">
-        
         <div class="dashboard-container">
+            <?php if ($alert_message): ?>
+            <div class="alert alert-<?php echo $alert_type; ?>">
+                <?php echo $alert_message; ?>
+            </div>
+            <?php endif; ?>
+            
             <div class="welcome-user">
                 <div class="user-info">
-                    Selamat datang, <?= $_SESSION['nama_lengkap'] ?> (<?= $_SESSION['role'] ?>)
+                    <h2>Dashboard</h2>
+                    <p>Selamat datang, <strong><?= $_SESSION['nama_lengkap'] ?? 'User' ?></strong> (<?= $role ?>)</p>
                 </div>
                 <div>
-                    <a href="../logout.php" class="btn btn-danger">Logout</a>
+                    <a href="../logout.php" class="btn btn-danger p-5" style="margin-right: 20px; padding: 10px;"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
             </div>
             
-            <div class="dashboard-header">
-                <h2>Dashboard Admin</h2>
-                <div>
-                    <a href="manage_reservasi.php" class="btn">Kelola Reservasi</a>
-                    <a href="manage_kamar.php" class="btn">Kelola Kamar</a>
-                    <?php if ($_SESSION['role'] == 'admin'): ?>
-                    <a href="manage_users.php" class="btn">Kelola Users</a>
-                    <?php endif; ?>
-                </div>
+            <div class="dashboard-nav">
+                <a href="dashboard.php" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="manage_reservasi.php"><i class="fas fa-calendar-check"></i> Kelola Reservasi</a>
+                <a href="manage_kamar.php"><i class="fas fa-bed"></i> Kelola Kamar</a>
+                <?php if ($isAdmin): ?>
+                <a href="manage_users.php"><i class="fas fa-users"></i> Kelola Users</a>
+                <a href="laporan.php"><i class="fas fa-chart-bar"></i> Laporan</a>
+                <?php endif; ?>
             </div>
             
             <div class="dashboard-stats">
@@ -76,14 +128,7 @@ $kamar_tersedia = mysqli_fetch_assoc($query_kamar)['tersedia'];
                 </div>
                 <div class="stat-card">
                     <h3>Check-In Hari Ini</h3>
-                    <div class="stat-value">
-                        <?php
-                        $today = date('Y-m-d');
-                        $query_checkin = mysqli_query($conn, "SELECT COUNT(*) as jumlah FROM tabel_reservasi WHERE tanggal_checkin = '$today' AND status = 'confirmed'");
-                        $checkin_hari_ini = mysqli_fetch_assoc($query_checkin)['jumlah'];
-                        echo $checkin_hari_ini;
-                        ?>
-                    </div>
+                    <div class="stat-value"><?= $checkin_hari_ini ?></div>
                 </div>
                 <div class="stat-card">
                     <h3>Kamar Tersedia</h3>
@@ -91,7 +136,7 @@ $kamar_tersedia = mysqli_fetch_assoc($query_kamar)['tersedia'];
                 </div>
             </div>
             
-            <h3>Reservasi Terbaru</h3>
+            <h3><i class="fas fa-list"></i> Reservasi Terbaru</h3>
             <div style="overflow-x: auto;">
                 <table class="reservation-table">
                     <thead>
@@ -107,83 +152,117 @@ $kamar_tersedia = mysqli_fetch_assoc($query_kamar)['tersedia'];
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while ($reservasi = mysqli_fetch_assoc($query_reservasi)): ?>
-                        <tr>
-                            <td><?= $reservasi['kode_booking'] ?></td>
-                            <td><?= $reservasi['nama_tamu'] ?></td>
-                            <td><?= date('d-m-Y', strtotime($reservasi['tanggal_checkin'])) ?></td>
-                            <td><?= date('d-m-Y', strtotime($reservasi['tanggal_checkout'])) ?></td>
-                            <td>Rp <?= number_format($reservasi['total_harga'], 0, ',', '.') ?></td>
-                            <td>
-                                <?php
-                                switch ($reservasi['status']) {
-                                    case 'pending':
-                                        echo '<span class="status-pending">Menunggu Konfirmasi</span>';
-                                        break;
-                                    case 'confirmed':
-                                        echo '<span class="status-confirmed">Terkonfirmasi</span>';
-                                        break;
-                                    case 'checked_in':
-                                        echo '<span class="status-checked-in">Check-in</span>';
-                                        break;
-                                    case 'checked_out':
-                                        echo '<span class="status-checked-out">Check-out</span>';
-                                        break;
-                                    case 'cancelled':
-                                        echo '<span class="status-cancelled">Dibatalkan</span>';
-                                        break;
-                                }
-                                ?>
-                            </td>
-                            <td>
-                                <?php
-                                if (isset($reservasi['status_pembayaran'])) {
-                                    switch ($reservasi['status_pembayaran']) {
+                        <?php if (mysqli_num_rows($query_reservasi) > 0): ?>
+                            <?php while ($reservasi = mysqli_fetch_assoc($query_reservasi)): ?>
+                            <tr>
+                                <td><?= $reservasi['kode_booking'] ?></td>
+                                <td><?= $reservasi['nama_tamu'] ?></td>
+                                <td><?= date('d-m-Y', strtotime($reservasi['tanggal_checkin'])) ?></td>
+                                <td><?= date('d-m-Y', strtotime($reservasi['tanggal_checkout'])) ?></td>
+                                <td>Rp <?= number_format($reservasi['total_harga'], 0, ',', '.') ?></td>
+                                <td>
+                                    <?php
+                                    $status_class = '';
+                                    $status_text = '';
+                                    
+                                    switch ($reservasi['status']) {
                                         case 'pending':
-                                            echo '<span class="status-pending">Menunggu Pembayaran</span>';
+                                            $status_class = 'status-pending';
+                                            $status_text = 'Menunggu Konfirmasi';
                                             break;
-                                        case 'success':
-                                            echo '<span class="status-checked-in">Lunas</span>';
+                                        case 'confirmed':
+                                            $status_class = 'status-confirmed';
+                                            $status_text = 'Terkonfirmasi';
                                             break;
-                                        case 'failed':
-                                            echo '<span class="status-cancelled">Gagal</span>';
+                                        case 'checked_in':
+                                            $status_class = 'status-checked-in';
+                                            $status_text = 'Check-in';
+                                            break;
+                                        case 'checked_out':
+                                            $status_class = 'status-checked-out';
+                                            $status_text = 'Check-out';
+                                            break;
+                                        case 'cancelled':
+                                            $status_class = 'status-cancelled';
+                                            $status_text = 'Dibatalkan';
                                             break;
                                     }
-                                } else {
-                                    echo '-';
-                                }
-                                ?>
-                            </td>
-                            <td>
-                                <div class="action-buttons">
-                                    <a href="detail_reservasi.php?id=<?= $reservasi['id_reservasi'] ?>" class="btn">Detail</a>
-                                    <?php if ($reservasi['status'] == 'pending'): ?>
-                                    <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=confirmed" class="btn btn-success">Konfirmasi</a>
-                                    <?php elseif ($reservasi['status'] == 'confirmed'): ?>
-                                    <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=checked_in" class="btn btn-success">Check-in</a>
-                                    <?php elseif ($reservasi['status'] == 'checked_in'): ?>
-                                    <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=checked_out" class="btn btn-success">Check-out</a>
-                                    <?php endif; ?>
-                                    <?php if ($reservasi['status'] != 'cancelled' && $reservasi['status'] != 'checked_out'): ?>
-                                    <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=cancelled" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin membatalkan reservasi ini?')">Batalkan</a>
-                                    <?php endif; ?>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php endwhile; ?>
-                        <?php if (mysqli_num_rows($query_reservasi) == 0): ?>
-                        <tr>
-                            <td colspan="8" style="text-align: center;">Tidak ada data reservasi</td>
-                        </tr>
+                                    ?>
+                                    <span class="status-badge <?= $status_class ?>"><?= $status_text ?></span>
+                                </td>
+                                <td>
+                                    <?php
+                                    $payment_class = '';
+                                    $payment_text = '-';
+                                    
+                                    if (isset($reservasi['status_pembayaran'])) {
+                                        switch ($reservasi['status_pembayaran']) {
+                                            case 'pending':
+                                                $payment_class = 'status-pending';
+                                                $payment_text = 'Menunggu Pembayaran';
+                                                break;
+                                            case 'success':
+                                                $payment_class = 'status-checked-in';
+                                                $payment_text = 'Lunas';
+                                                break;
+                                            case 'failed':
+                                                $payment_class = 'status-cancelled';
+                                                $payment_text = 'Gagal';
+                                                break;
+                                        }
+                                    }
+                                    ?>
+                                    <span class="status-badge <?= $payment_class ?>"><?= $payment_text ?></span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="detail_reservasi.php?id=<?= $reservasi['id_reservasi'] ?>" class="btn btn-primary" title="Lihat Detail"><i class="fas fa-eye"></i></a>
+                                        
+                                        <?php if ($reservasi['status'] == 'pending'): ?>
+                                        <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=confirmed" class="btn btn-success" title="Konfirmasi"><i class="fas fa-check"></i></a>
+                                        <?php elseif ($reservasi['status'] == 'confirmed'): ?>
+                                        <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=checked_in" class="btn btn-success" title="Check-in"><i class="fas fa-sign-in-alt"></i></a>
+                                        <?php elseif ($reservasi['status'] == 'checked_in'): ?>
+                                        <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=checked_out" class="btn btn-success" title="Check-out"><i class="fas fa-sign-out-alt"></i></a>
+                                        <?php endif; ?>
+                                        
+                                        <?php if ($reservasi['status'] != 'cancelled' && $reservasi['status'] != 'checked_out'): ?>
+                                        <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=cancelled" class="btn btn-danger" title="Batalkan" onclick="return confirm('Apakah Anda yakin ingin membatalkan reservasi ini?')"><i class="fas fa-times"></i></a>
+                                        <?php endif; ?>
+                                        
+                                        <?php if ($reservasi['status_pembayaran'] == 'pending'): ?>
+                                        <a href="../proses/proses_update_pembayaran.php?id=<?= $reservasi['id_pembayaran'] ?>&status=success" class="btn btn-success" title="Konfirmasi Pembayaran"><i class="fas fa-money-bill"></i></a>
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="8" style="text-align: center;">Tidak ada data reservasi</td>
+                            </tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
             </div>
-            
-            <div style="text-align: center; margin-top: 20px;">
-                <a href="manage_reservasi.php" class="btn">Lihat Semua Reservasi</a>
-            </div>
         </div>
     </div>
+    
+    <?php include_once '../components/footer.php'; ?>
+    
+    <script>
+        // Show alert message and hide after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alertElement = document.querySelector('.alert');
+            if (alertElement) {
+                setTimeout(function() {
+                    alertElement.style.opacity = '0';
+                    setTimeout(function() {
+                        alertElement.style.display = 'none';
+                    }, 500);
+                }, 5000);
+            }
+        });
+    </script>
 </body>
 </html>
