@@ -40,73 +40,6 @@ $kamar_tersedia = mysqli_fetch_assoc($query_kamar)['tersedia'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Hotel Reservation System</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .dashboard-container {
-            padding: 20px;
-        }
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .dashboard-stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .stat-card {
-            flex: 1;
-            min-width: 200px;
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .stat-card h3 {
-            margin-top: 0;
-            color: #3498db;
-        }
-        .stat-value {
-            font-size: 28px;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        .reservation-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .reservation-table th, .reservation-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        .reservation-table th {
-            background-color: #f5f5f5;
-            font-weight: bold;
-        }
-        .reservation-table tr:hover {
-            background-color: #f9f9f9;
-        }
-        .action-buttons {
-            display: flex;
-            gap: 5px;
-        }
-        .welcome-user {
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .user-info {
-            font-weight: bold;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -225,14 +158,14 @@ $kamar_tersedia = mysqli_fetch_assoc($query_kamar)['tersedia'];
                                 <div class="action-buttons">
                                     <a href="detail_reservasi.php?id=<?= $reservasi['id_reservasi'] ?>" class="btn">Detail</a>
                                     <?php if ($reservasi['status'] == 'pending'): ?>
-                                    <a href="../proses/update_status.php?id=<?= $reservasi['id_reservasi'] ?>&status=confirmed" class="btn btn-success">Konfirmasi</a>
+                                    <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=confirmed" class="btn btn-success">Konfirmasi</a>
                                     <?php elseif ($reservasi['status'] == 'confirmed'): ?>
-                                    <a href="../proses/update_status.php?id=<?= $reservasi['id_reservasi'] ?>&status=checked_in" class="btn btn-success">Check-in</a>
+                                    <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=checked_in" class="btn btn-success">Check-in</a>
                                     <?php elseif ($reservasi['status'] == 'checked_in'): ?>
-                                    <a href="../proses/update_status.php?id=<?= $reservasi['id_reservasi'] ?>&status=checked_out" class="btn btn-success">Check-out</a>
+                                    <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=checked_out" class="btn btn-success">Check-out</a>
                                     <?php endif; ?>
                                     <?php if ($reservasi['status'] != 'cancelled' && $reservasi['status'] != 'checked_out'): ?>
-                                    <a href="../proses/update_status.php?id=<?= $reservasi['id_reservasi'] ?>&status=cancelled" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin membatalkan reservasi ini?')">Batalkan</a>
+                                    <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=cancelled" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin membatalkan reservasi ini?')">Batalkan</a>
                                     <?php endif; ?>
                                 </div>
                             </td>
