@@ -72,8 +72,7 @@ try {
     $update_pembayaran = mysqli_query($conn, "
         UPDATE tabel_pembayaran
         SET status_pembayaran = '$status',
-            tanggal_pembayaran = NOW(),
-            updated_at = NOW()
+            tanggal_pembayaran = NOW()
         WHERE id_pembayaran = $id_pembayaran
     ");
 
@@ -85,8 +84,7 @@ try {
     if ($status == 'success' && $reservation_status == 'pending') {
         $update_reservasi = mysqli_query($conn, "
             UPDATE tabel_reservasi
-            SET status = 'confirmed',
-                updated_at = NOW()
+            SET status = 'confirmed'
             WHERE id_reservasi = $id_reservasi
         ");
         
