@@ -43,94 +43,6 @@ if (isset($_GET['kode_booking']) && !empty($_GET['kode_booking'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cek Reservasi - Hotel Reservation System</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .search-container {
-            max-width: 500px;
-            margin: 30px auto;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        .search-container input[type="text"] {
-            width: 70%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-right: 10px;
-        }
-        .detail-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .detail-section {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #ddd;
-        }
-        .detail-section:last-child {
-            border-bottom: none;
-        }
-        .detail-section h3 {
-            margin-top: 0;
-            color: #3498db;
-            border-bottom: 1px solid #3498db;
-            padding-bottom: 5px;
-        }
-        .detail-item {
-            display: flex;
-            margin-bottom: 10px;
-        }
-        .detail-label {
-            font-weight: bold;
-            width: 180px;
-        }
-        .detail-value {
-            flex: 1;
-        }
-        .status-pending {
-            color: #f39c12;
-            font-weight: bold;
-        }
-        .status-confirmed {
-            color: #3498db;
-            font-weight: bold;
-        }
-        .status-checked-in {
-            color: #2ecc71;
-            font-weight: bold;
-        }
-        .status-checked-out {
-            color: #9b59b6;
-            font-weight: bold;
-        }
-        .status-cancelled {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-        .room-details {
-            background-color: #e1f5fe;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-        .alert {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .payment-method {
-            text-transform: capitalize;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -286,4 +198,70 @@ if (isset($_GET['kode_booking']) && !empty($_GET['kode_booking'])) {
                 </div>
                 <div class="detail-item">
                     <div class="detail-label">Metode Pembayaran:</div>
-                    <div
+                    <div class="detail-value payment-method"><?= str_replace('_', ' ', $pembayaran['metode_pembayaran']) ?></div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Status Pembayaran:</div>
+                    <div class="detail-value">
+                        <?php
+                        switch ($pembayaran['status_pembayaran']) {
+                            case 'pending':
+                                echo '<span class="status-pending">Menunggu Pembayaran</span>';
+                                break;
+                            case 'success':
+                                echo '<span class="status-checked-in">Pembayaran Berhasil</span>';
+                                break;
+                            case 'failed':
+                                echo '<span class="status-cancelled">Pembayaran Gagal</span>';
+                                break;
+                        }
+                        ?>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Tanggal Pembayaran:</div>
+                    <div class="detail-value"><?= date('d F Y H:i', strtotime($pembayaran['tanggal_pembayaran'])) ?></div>
+                </div>
+            </div>
+            <?php endif; ?>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="javascript:window.print()" class="btn">Cetak</a>
+                <a href="../index.php" class="btn">Kembali ke Home</a>
+            </div>
+        </div>
+        <?php endif; ?>
+        
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Hotel Reservation System</h3>
+                    <p>Jl. Hotel Indah No. 123, Kota</p>
+                    <p>Telepon: (021) 1234-5678</p>
+                    <p>Email: info@hotelreservation.com</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Link</h3>
+                    <ul>
+                        <li><a href="../index.php">Home</a></li>
+                        <li><a href="kamar.php">Kamar</a></li>
+                        <li><a href="reservasi.php">Reservasi</a></li>
+                        <li><a href="cek_reservasi.php">Cek Reservasi</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Sosial Media</h3>
+                    <div class="social-links">
+                        <a href="#">Facebook</a>
+                        <a href="#">Instagram</a>
+                        <a href="#">Twitter</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Hotel Reservation System. All Rights Reserved.</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

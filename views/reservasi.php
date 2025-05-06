@@ -25,49 +25,6 @@ $tomorrow = date('Y-m-d', strtotime('+1 day'));
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservasi - Hotel Reservation System</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .form-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-        .form-col {
-            flex: 1;
-            padding: 0 10px;
-            min-width: 250px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .form-group textarea {
-            height: 100px;
-        }
-        .selected-room {
-            background-color: #e1f5fe;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
