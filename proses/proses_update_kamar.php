@@ -8,69 +8,54 @@ if (!isset($_SESSION['login'])) {
     exit;
 }
 
-// Validasi parameter
-if (!isset($_GET['id']) || empty($_GET['id']) || !isset($_GET['status']) || empty($_GET['status'])) {
-    header("Location: ../views/manage_kamar.php?error=invalid_params");
+// Cek apakah user adalah admin
+if ($_SESSION['role'] != 'admin') {
+    header("Location: ../views/dashboard.php");
     exit;
 }
 
-$id_kamar = (int)$_GET['id'];
-$status = mysqli_real_escape_string($conn, $_GET['status']);
-
-// Validasi status
-if (!in_array($status, ['tersedia', 'terpakai', 'perbaikan'])) {
-    header("Location: ../views/manage_kamar.php?error=invalid_status");
-    exit;
-}
-
-// Ambil data kamar
-$query_kamar = mysqli_query($conn, "SELECT * FROM tabel_kamar WHERE id_kamar = $id_kamar");
-
-if (mysqli_num_rows($query_kamar) == 0) {
-    header("Location: ../views/manage_kamar.php?error=not_found");
-    exit;
-}
-
-// Cek apakah kamar sedang digunakan dalam reservasi aktif
-if ($status == 'tersedia' || $status == 'perbaikan') {
-    $query_check = mysqli_query($conn, "
-        SELECT r.id_reservasi 
-        FROM tabel_reservasi r
-        JOIN tabel_detail_reservasi dr ON r.id_reservasi = dr.id_reservasi
-        WHERE dr.id_kamar = $id_kamar 
-        AND r.status IN ('confirmed', 'checked_in')
-        LIMIT 1
-    ");
+// Cek method request
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Ambil data dari form
+    $id_kamar = htmlspecialchars($_POST['id_kamar']);
+    $nomor_kamar = htmlspecialchars($_POST['nomor_kamar']);
+    $id_jenis = htmlspecialchars($_POST['id_jenis']);
+    $lantai = htmlspecialchars($_POST['lantai']);
+    $status = htmlspecialchars($_POST['status']);
     
-    if (mysqli_num_rows($query_check) > 0 && $status == 'perbaikan') {
-        header("Location: ../views/manage_kamar.php?error=room_in_use");
+    // Validasi data
+    if (empty($id_kamar) || empty($nomor_kamar) || empty($id_jenis) || empty($lantai) || empty($status)) {
+        header("Location: ../views/edit_kamar.php?id=$id_kamar&error=empty_fields");
         exit;
     }
-}
-
-// Update status kamar
-$update_kamar = mysqli_query($conn, "
-    UPDATE tabel_kamar 
-    SET status = '$status' 
-    WHERE id_kamar = $id_kamar
-");
-
-if (!$update_kamar) {
-    header("Location: ../views/manage_kamar.php?error=update_failed");
+    
+    // Cek apakah nomor kamar sudah ada (kecuali kamar yang sedang diedit)
+    $check_query = "SELECT * FROM tabel_kamar WHERE nomor_kamar = '$nomor_kamar' AND id_kamar != '$id_kamar'";
+    $check_result = mysqli_query($conn, $check_query);
+    
+    if (mysqli_num_rows($check_result) > 0) {
+        header("Location: ../views/edit_kamar.php?id=$id_kamar&error=nomor_exists");
+        exit;
+    }
+    
+    // Update data di database
+    $query = "UPDATE tabel_kamar SET 
+                nomor_kamar = '$nomor_kamar', 
+                id_jenis = '$id_jenis', 
+                lantai = '$lantai', 
+                status = '$status'
+                WHERE id_kamar = '$id_kamar'";
+    
+    if (mysqli_query($conn, $query)) {
+        header("Location: ../views/manage_kamar.php?success=updated");
+        exit;
+    } else {
+        header("Location: ../views/edit_kamar.php?id=$id_kamar&error=failed");
+        exit;
+    }
+} else {
+    // Jika bukan method POST, redirect ke halaman kelola kamar
+    header("Location: ../views/manage_kamar.php");
     exit;
 }
-
-// Catat log aktivitas
-$kamar = mysqli_fetch_assoc($query_kamar);
-$status_text = ($status == 'tersedia') ? 'Tersedia' : (($status == 'terpakai') ? 'Terpakai' : 'Dalam Perbaikan');
-$aktivitas = "Memperbarui status kamar #" . $kamar['nomor_kamar'] . " menjadi $status_text";
-$id_user = $_SESSION['id_user'];
-$log_query = mysqli_query($conn, "
-    INSERT INTO tabel_log (id_user, aktivitas, created_at)
-    VALUES ($id_user, '$aktivitas', NOW())
-");
-
-// Redirect kembali ke halaman manage kamar
-header("Location: ../views/manage_kamar.php?success=status_updated");
-exit;
 ?>
