@@ -13,25 +13,6 @@ if ($_SESSION['role'] != 'admin') {
     header("Location: dashboard.php");
     exit;
 }
-
-// Validasi parameter
-if (!isset($_GET['id']) || empty($_GET['id'])) {
-    header("Location: manage_users.php?error=invalid_params");
-    exit;
-}
-
-$id_user = (int)$_GET['id'];
-
-// Ambil data user
-$query = "SELECT * FROM tabel_users WHERE id_user = $id_user";
-$result = mysqli_query($conn, $query);
-
-if (mysqli_num_rows($result) == 0) {
-    header("Location: manage_users.php?error=not_found");
-    exit;
-}
-
-$user = mysqli_fetch_assoc($result);
 ?>
 
 <!DOCTYPE html>
@@ -40,7 +21,7 @@ $user = mysqli_fetch_assoc($result);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Pengguna - Hotel Reservation System</title>
+    <title>Tambah Pengguna - Hotel Reservation System</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 
@@ -50,7 +31,7 @@ $user = mysqli_fetch_assoc($result);
 
 
         <div class="form-container">
-            <h2>Edit Pengguna</h2>
+            <h2>Tambah Pengguna Baru</h2>
 
             <?php if (isset($_GET['error'])): ?>
                 <div class="alert alert-danger">
@@ -62,11 +43,14 @@ $user = mysqli_fetch_assoc($result);
                         case 'invalid_email':
                             echo "Format email tidak valid.";
                             break;
+                        case 'username_exists':
+                            echo "Username sudah digunakan.";
+                            break;
                         case 'email_exists':
-                            echo "Email sudah digunakan oleh pengguna lain.";
+                            echo "Email sudah digunakan.";
                             break;
                         case 'failed':
-                            echo "Gagal memperbarui data pengguna.";
+                            echo "Gagal menambahkan pengguna.";
                             break;
                         default:
                             echo "Terjadi kesalahan. Silakan coba lagi.";
@@ -75,46 +59,45 @@ $user = mysqli_fetch_assoc($result);
                 </div>
             <?php endif; ?>
 
-            <form action="../proses/proses_edit_user.php" method="POST">
-                <input type="hidden" name="id_user" value="<?= $user['id_user'] ?>">
-
+            <form action="../proses/proses_tambah_user.php" method="POST">
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" value="<?= $user['username'] ?>" readonly class="readonly">
-                    <small>Username tidak dapat diubah</small>
+                    <input type="text" id="username" name="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                    <small>Password minimal 8 karakter</small>
                 </div>
 
                 <div class="form-group">
                     <label for="nama_lengkap">Nama Lengkap</label>
-                    <input type="text" id="nama_lengkap" name="nama_lengkap" value="<?= $user['nama_lengkap'] ?>" required>
+                    <input type="text" id="nama_lengkap" name="nama_lengkap" required>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" value="<?= $user['email'] ?>" required>
+                    <input type="email" id="email" name="email" required>
                 </div>
 
                 <div class="form-group">
                     <label for="level">Level</label>
                     <select id="level" name="level" required>
-                        <option value="admin" <?= $user['level'] == 'admin' ? 'selected' : '' ?>>Admin</option>
-                        <option value="resepsionis" <?= $user['level'] == 'resepsionis' ? 'selected' : '' ?>>Resepsionis</option>
-                        <option value="manager" <?= $user['level'] == 'manager' ? 'selected' : '' ?>>Manager</option>
+                        <option value="">-- Pilih Level --</option>
+                        <option value="admin">Admin</option>
+                        <option value="resepsionis">Resepsionis</option>
+                        <option value="manager">Manager</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="status">Status</label>
-                    <input type="text" id="status" value="<?= ucfirst($user['status']) ?>" readonly class="readonly">
-                    <small>Status dapat diubah melalui halaman kelola pengguna</small>
-                </div>
-
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                    <button type="submit" class="btn btn-primary">Tambah Pengguna</button>
                     <a href="manage_users.php" class="btn">Kembali</a>
                 </div>
             </form>
         </div>
+
         <?php include_once '../components/footer.php'; ?>
 
     </div>

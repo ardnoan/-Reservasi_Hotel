@@ -107,3 +107,12 @@ INSERT INTO tabel_kamar (nomor_kamar, id_jenis, status, lantai) VALUES
 ('202', 2, 'tersedia', 2),
 ('301', 3, 'tersedia', 3),
 ('401', 4, 'tersedia', 4);
+
+
+CREATE TABLE IF NOT EXISTS tabel_log (
+id_log INT AUTO_INCREMENT PRIMARY KEY,
+    id_user INT NOT NULL,
+    aktivitas TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_user) REFERENCES users(id) ON DELETE CASCADE
+);

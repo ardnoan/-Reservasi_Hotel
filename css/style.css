@@ -165,7 +165,7 @@ h2 {
 
 .room-details {
   padding: 20px;
-  background-color: #e1f5fe;
+  background-color: transparent;
   border-radius: 5px;
 }
 
@@ -402,7 +402,7 @@ form {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 .detail-section {
-  margin-bottom: 20px;
+  margin-top: 20px;
   padding-bottom: 20px;
   border-bottom: 1px solid #ddd;
 }
@@ -464,27 +464,27 @@ form {
 .status-pending {
   color: #f39c12;
   font-weight: bold;
+  padding: 10px;
 }
 .status-confirmed {
   color: #343fdb;
   font-weight: bold;
+  padding: 10px;
 }
 .status-checked-in {
   color: #2ecc71;
   font-weight: bold;
+  padding: 10px;
 }
 .status-checked-out {
   color: #9b59b6;
   font-weight: bold;
+  padding: 10px;
 }
 .status-cancelled {
   color: #e74c3c;
   font-weight: bold;
-}
-.room-details {
-  background-color: #e1f5fe;
-  padding: 15px;
-  border-radius: 5px;
+  padding: 10px;
 }
 .alert {
   background-color: #f8d7da;
@@ -528,24 +528,6 @@ form {
   font-size: 28px;
   font-weight: bold;
   margin: 10px 0;
-}
-.reservation-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-.reservation-table th,
-.reservation-table td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-.reservation-table th {
-  background-color: #3498db;
-  font-weight: bold;
-}
-.reservation-table tr:hover {
-  background-color: #3498db;
 }
 .action-buttons {
   display: flex;
@@ -677,12 +659,12 @@ form {
 }
 
 .reservation-table th {
-  background-color: #f8f9fa;
-  font-weight: 600;
+  background-color: #d6d6d6;
+  font-weight: 800;
 }
 
 .reservation-table tr:hover {
-  background-color: #f5f5f5;
+  background-color: #e0e0e0;
 }
 
 .status-badge {
@@ -723,19 +705,6 @@ form {
   gap: 5px;
 }
 
-.btn {
-  display: inline-block;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  background-color: #6c757d;
-  color: white;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: background 0.3s;
-}
-
 .btn:hover {
   opacity: 0.9;
 }
@@ -773,4 +742,11 @@ form {
   .action-buttons a {
     margin-bottom: 5px;
   }
+}
+.payment-actions {
+  display: flex;
+  justify-content: end;
+  gap: 10px;
+  padding: 10px;
+  margin-top: 20px;
 }

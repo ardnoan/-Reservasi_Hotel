@@ -10,6 +10,7 @@ if (!isset($_SESSION['login'])) {
 
 // Cek apakah user adalah admin
 if ($_SESSION['role'] != 'admin') {
+    echo "<script>alert('Anda Bukan Admin!')</script>";
     header("Location: dashboard.php");
     exit;
 }

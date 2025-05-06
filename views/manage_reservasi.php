@@ -10,6 +10,7 @@ if (!isset($_SESSION['login'])) {
 
 // Cek apakah user adalah admin
 if ($_SESSION['role'] != 'admin') {
+    echo "<script>alert('Anda Bukan Admin!')</script>";
     header("Location: dashboard.php");
     exit;
 }
@@ -198,10 +199,6 @@ $total_pages = ceil($total_records / $limit);
                 <?php endif; ?>
             </div>
             <?php endif; ?>
-            
-            <div class="dashboard-actions">
-                <a href="dashboard.php" class="btn">Kembali ke Dashboard</a>
-            </div>
         </div>
         
         <footer>

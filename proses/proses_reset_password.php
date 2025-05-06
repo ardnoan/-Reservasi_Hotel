@@ -22,15 +22,30 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 
 $id_user = (int)$_GET['id'];
 
-// Generate default password
-$default_password = 'password123'; // Anda bisa mengubah ini
+// Cek apakah user yang akan di-reset password-nya ada
+$query_check = mysqli_query($conn, "SELECT * FROM tabel_users WHERE id_user = $id_user");
+if (mysqli_num_rows($query_check) == 0) {
+    header("Location: ../views/manage_users.php?error=user_not_found");
+    exit;
+}
+
+$user = mysqli_fetch_assoc($query_check);
+
+// Cek apakah user mencoba me-reset password dirinya sendiri
+if ($id_user == $_SESSION['id_user']) {
+    header("Location: ../views/manage_users.php?error=cannot_reset_self");
+    exit;
+}
+
+// Generate default password (username123)
+$default_password = $user['username'] . '123';
 $hashed_password = password_hash($default_password, PASSWORD_DEFAULT);
 
 // Update password
 $query = "UPDATE tabel_users SET password = '$hashed_password' WHERE id_user = $id_user";
 if (mysqli_query($conn, $query)) {
     // Catat log aktivitas
-    $aktivitas = "Mereset password pengguna dengan ID #$id_user";
+    $aktivitas = "Mereset password pengguna dengan ID #$id_user (username: " . $user['username'] . ")";
     $id_admin = $_SESSION['id_user'];
     mysqli_query($conn, "
         INSERT INTO tabel_log (id_user, aktivitas, created_at)
@@ -43,3 +58,4 @@ if (mysqli_query($conn, $query)) {
     header("Location: ../views/manage_users.php?error=reset_failed");
     exit;
 }
+?>

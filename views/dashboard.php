@@ -79,6 +79,7 @@ if (isset($_GET['error'])) {
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -86,17 +87,18 @@ if (isset($_GET['error'])) {
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+
 <body>
     <?php include_once '../components/navbar.php'; ?>
-    
+
     <div class="container">
         <div class="dashboard-container">
             <?php if ($alert_message): ?>
-            <div class="alert alert-<?php echo $alert_type; ?>">
-                <?php echo $alert_message; ?>
-            </div>
+                <div class="alert alert-<?php echo $alert_type; ?>">
+                    <?php echo $alert_message; ?>
+                </div>
             <?php endif; ?>
-            
+
             <div class="welcome-user">
                 <div class="user-info">
                     <h2>Dashboard</h2>
@@ -106,17 +108,17 @@ if (isset($_GET['error'])) {
                     <a href="../logout.php" class="btn btn-danger p-5" style="margin-right: 20px; padding: 10px;"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
             </div>
-            
+
             <div class="dashboard-nav">
                 <a href="dashboard.php" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                 <a href="manage_reservasi.php"><i class="fas fa-calendar-check"></i> Kelola Reservasi</a>
                 <a href="manage_kamar.php"><i class="fas fa-bed"></i> Kelola Kamar</a>
                 <?php if ($isAdmin): ?>
-                <a href="manage_users.php"><i class="fas fa-users"></i> Kelola Users</a>
-                <a href="laporan.php"><i class="fas fa-chart-bar"></i> Laporan</a>
+                    <a href="manage_users.php"><i class="fas fa-users"></i> Kelola Users</a>
+                    <a href="laporan.php"><i class="fas fa-chart-bar"></i> Laporan</a>
                 <?php endif; ?>
             </div>
-            
+
             <div class="dashboard-stats">
                 <div class="stat-card">
                     <h3>Total Reservasi</h3>
@@ -135,7 +137,7 @@ if (isset($_GET['error'])) {
                     <div class="stat-value"><?= $kamar_tersedia ?></div>
                 </div>
             </div>
-            
+
             <h3><i class="fas fa-list"></i> Reservasi Terbaru</h3>
             <div style="overflow-x: auto;">
                 <table class="reservation-table">
@@ -154,88 +156,177 @@ if (isset($_GET['error'])) {
                     <tbody>
                         <?php if (mysqli_num_rows($query_reservasi) > 0): ?>
                             <?php while ($reservasi = mysqli_fetch_assoc($query_reservasi)): ?>
-                            <tr>
-                                <td><?= $reservasi['kode_booking'] ?></td>
-                                <td><?= $reservasi['nama_tamu'] ?></td>
-                                <td><?= date('d-m-Y', strtotime($reservasi['tanggal_checkin'])) ?></td>
-                                <td><?= date('d-m-Y', strtotime($reservasi['tanggal_checkout'])) ?></td>
-                                <td>Rp <?= number_format($reservasi['total_harga'], 0, ',', '.') ?></td>
-                                <td>
-                                    <?php
-                                    $status_class = '';
-                                    $status_text = '';
-                                    
-                                    switch ($reservasi['status']) {
-                                        case 'pending':
-                                            $status_class = 'status-pending';
-                                            $status_text = 'Menunggu Konfirmasi';
-                                            break;
-                                        case 'confirmed':
-                                            $status_class = 'status-confirmed';
-                                            $status_text = 'Terkonfirmasi';
-                                            break;
-                                        case 'checked_in':
-                                            $status_class = 'status-checked-in';
-                                            $status_text = 'Check-in';
-                                            break;
-                                        case 'checked_out':
-                                            $status_class = 'status-checked-out';
-                                            $status_text = 'Check-out';
-                                            break;
-                                        case 'cancelled':
-                                            $status_class = 'status-cancelled';
-                                            $status_text = 'Dibatalkan';
-                                            break;
-                                    }
-                                    ?>
-                                    <span class="status-badge <?= $status_class ?>"><?= $status_text ?></span>
-                                </td>
-                                <td>
-                                    <?php
-                                    $payment_class = '';
-                                    $payment_text = '-';
-                                    
-                                    if (isset($reservasi['status_pembayaran'])) {
-                                        switch ($reservasi['status_pembayaran']) {
+                                <tr>
+                                    <td><?= $reservasi['kode_booking'] ?></td>
+                                    <td><?= $reservasi['nama_tamu'] ?></td>
+                                    <td><?= date('d-m-Y', strtotime($reservasi['tanggal_checkin'])) ?></td>
+                                    <td><?= date('d-m-Y', strtotime($reservasi['tanggal_checkout'])) ?></td>
+                                    <td>Rp <?= number_format($reservasi['total_harga'], 0, ',', '.') ?></td>
+                                    <td>
+                                        <?php
+                                        $status_class = '';
+                                        $status_text = '';
+
+                                        switch ($reservasi['status']) {
                                             case 'pending':
-                                                $payment_class = 'status-pending';
-                                                $payment_text = 'Menunggu Pembayaran';
+                                                $status_class = 'status-pending';
+                                                $status_text = 'Menunggu Konfirmasi';
                                                 break;
-                                            case 'success':
-                                                $payment_class = 'status-checked-in';
-                                                $payment_text = 'Lunas';
+                                            case 'confirmed':
+                                                $status_class = 'status-confirmed';
+                                                $status_text = 'Terkonfirmasi';
                                                 break;
-                                            case 'failed':
-                                                $payment_class = 'status-cancelled';
-                                                $payment_text = 'Gagal';
+                                            case 'checked_in':
+                                                $status_class = 'status-checked-in';
+                                                $status_text = 'Check-in';
+                                                break;
+                                            case 'checked_out':
+                                                $status_class = 'status-checked-out';
+                                                $status_text = 'Check-out';
+                                                break;
+                                            case 'cancelled':
+                                                $status_class = 'status-cancelled';
+                                                $status_text = 'Dibatalkan';
                                                 break;
                                         }
-                                    }
-                                    ?>
-                                    <span class="status-badge <?= $payment_class ?>"><?= $payment_text ?></span>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <a href="detail_reservasi.php?id=<?= $reservasi['id_reservasi'] ?>" class="btn btn-primary" title="Lihat Detail"><i class="fas fa-eye"></i></a>
-                                        
-                                        <?php if ($reservasi['status'] == 'pending'): ?>
-                                        <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=confirmed" class="btn btn-success" title="Konfirmasi"><i class="fas fa-check"></i></a>
-                                        <?php elseif ($reservasi['status'] == 'confirmed'): ?>
-                                        <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=checked_in" class="btn btn-success" title="Check-in"><i class="fas fa-sign-in-alt"></i></a>
-                                        <?php elseif ($reservasi['status'] == 'checked_in'): ?>
-                                        <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=checked_out" class="btn btn-success" title="Check-out"><i class="fas fa-sign-out-alt"></i></a>
-                                        <?php endif; ?>
-                                        
-                                        <?php if ($reservasi['status'] != 'cancelled' && $reservasi['status'] != 'checked_out'): ?>
-                                        <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=cancelled" class="btn btn-danger" title="Batalkan" onclick="return confirm('Apakah Anda yakin ingin membatalkan reservasi ini?')"><i class="fas fa-times"></i></a>
-                                        <?php endif; ?>
-                                        
-                                        <?php if ($reservasi['status_pembayaran'] == 'pending'): ?>
-                                        <a href="../proses/proses_update_pembayaran.php?id=<?= $reservasi['id_pembayaran'] ?>&status=success" class="btn btn-success" title="Konfirmasi Pembayaran"><i class="fas fa-money-bill"></i></a>
-                                        <?php endif; ?>
-                                    </div>
-                                </td>
-                            </tr>
+                                        ?>
+                                        <span class="status-badge <?= $status_class ?>"><?= $status_text ?></span>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        $payment_class = '';
+                                        $payment_text = '-';
+
+                                        if (isset($reservasi['status_pembayaran'])) {
+                                            switch ($reservasi['status_pembayaran']) {
+                                                case 'pending':
+                                                    $payment_class = 'status-pending';
+                                                    $payment_text = 'Menunggu Pembayaran';
+                                                    break;
+                                                case 'success':
+                                                    $payment_class = 'status-checked-in';
+                                                    $payment_text = 'Lunas';
+                                                    break;
+                                                case 'failed':
+                                                    $payment_class = 'status-cancelled';
+                                                    $payment_text = 'Gagal';
+                                                    break;
+                                            }
+                                        }
+                                        ?>
+                                        <span class="status-badge <?= $payment_class ?>"><?= $payment_text ?></span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <!-- View Details Button (always visible) -->
+                                            <a href="detail_reservasi.php?id=<?= $reservasi['id_reservasi'] ?>" class="btn btn-primary" title="Lihat Detail">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+
+                                            <!-- Status Management Buttons -->
+                                            <?php if ($reservasi['status'] == 'pending'): ?>
+                                                <?php if ($reservasi['status_pembayaran'] == 'success'): ?>
+                                                    <!-- Only show confirm button if payment is successful -->
+                                                    <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=confirmed"
+                                                        class="btn btn-success" title="Konfirmasi">
+                                                        <i class="fas fa-check"></i>
+                                                    </a>
+                                                <?php else: ?>
+                                                    <!-- Show disabled button with tooltip if payment pending -->
+                                                    <a href="javascript:void(0)" class="btn btn-secondary disabled"
+                                                        title="Pembayaran harus diselesaikan sebelum konfirmasi"
+                                                        data-toggle="tooltip" data-placement="top">
+                                                        <i class="fas fa-check"></i>
+                                                    </a>
+                                                <?php endif; ?>
+
+                                            <?php elseif ($reservasi['status'] == 'confirmed'): ?>
+                                                <?php if ($reservasi['status_pembayaran'] == 'success'): ?>
+                                                    <!-- Only show check-in button if payment is successful -->
+                                                    <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=checked_in"
+                                                        class="btn btn-success" title="Check-in">
+                                                        <i class="fas fa-sign-in-alt"></i>
+                                                    </a>
+                                                <?php else: ?>
+                                                    <!-- Show disabled button with tooltip if payment pending -->
+                                                    <a href="javascript:void(0)" class="btn btn-secondary disabled"
+                                                        title="Pembayaran harus diselesaikan sebelum check-in"
+                                                        data-toggle="tooltip" data-placement="top">
+                                                        <i class="fas fa-sign-in-alt"></i>
+                                                    </a>
+                                                <?php endif; ?>
+
+                                            <?php elseif ($reservasi['status'] == 'checked_in'): ?>
+                                                <!-- Check-out button -->
+                                                <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=checked_out"
+                                                    class="btn btn-success" title="Check-out">
+                                                    <i class="fas fa-sign-out-alt"></i>
+                                                </a>
+                                            <?php endif; ?>
+
+                                            <!-- Cancel Button (hide for completed/cancelled reservations) -->
+                                            <?php if ($reservasi['status'] != 'cancelled' && $reservasi['status'] != 'checked_out'): ?>
+                                                <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=cancelled"
+                                                    class="btn btn-danger" title="Batalkan"
+                                                    onclick="return confirm('Apakah Anda yakin ingin membatalkan reservasi ini?')">
+                                                    <i class="fas fa-times"></i>
+                                                </a>
+                                            <?php endif; ?>
+
+                                            <!-- Payment Button (only for pending payments) -->
+                                            <?php if ($reservasi['status_pembayaran'] == 'pending'): ?>
+                                                <a href="../proses/proses_update_pembayaran.php?id=<?= $reservasi['id_pembayaran'] ?>&status=success"
+                                                    class="btn btn-success" title="Konfirmasi Pembayaran">
+                                                    <i class="fas fa-money-bill"></i>
+                                                </a>
+                                            <?php endif; ?>
+
+                                            <!-- Status indicators -->
+                                            <span class="ml-2 badge badge-<?= getStatusBadgeClass($reservasi['status']) ?>" title="Status Reservasi">
+                                                <?= ucfirst($reservasi['status']) ?>
+                                            </span>
+
+                                            <span class="ml-2 badge badge-<?= getPaymentStatusBadgeClass($reservasi['status_pembayaran']) ?>" title="Status Pembayaran">
+                                                <?= $reservasi['status_pembayaran'] === 'success' ? 'Dibayar' : 'Belum Dibayar' ?>
+                                            </span>
+                                        </div>
+
+                                        <?php
+                                        // Helper functions to determine badge colors
+                                        function getStatusBadgeClass($status)
+                                        {
+                                            switch ($status) {
+                                                case 'pending':
+                                                    return 'warning';
+                                                case 'confirmed':
+                                                    return 'info';
+                                                case 'checked_in':
+                                                    return 'primary';
+                                                case 'checked_out':
+                                                    return 'success';
+                                                case 'cancelled':
+                                                    return 'danger';
+                                                default:
+                                                    return 'secondary';
+                                            }
+                                        }
+
+                                        function getPaymentStatusBadgeClass($status)
+                                        {
+                                            switch ($status) {
+                                                case 'success':
+                                                    return 'success';
+                                                case 'pending':
+                                                    return 'warning';
+                                                case 'failed':
+                                                    return 'danger';
+                                                default:
+                                                    return 'secondary';
+                                            }
+                                        }
+                                        ?>
+                                    </td>
+                                </tr>
                             <?php endwhile; ?>
                         <?php else: ?>
                             <tr>
@@ -247,9 +338,9 @@ if (isset($_GET['error'])) {
             </div>
         </div>
     </div>
-    
+
     <?php include_once '../components/footer.php'; ?>
-    
+
     <script>
         // Show alert message and hide after 5 seconds
         document.addEventListener('DOMContentLoaded', function() {
@@ -265,4 +356,5 @@ if (isset($_GET['error'])) {
         });
     </script>
 </body>
+
 </html>

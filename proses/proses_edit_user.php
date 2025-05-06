@@ -17,7 +17,7 @@ if ($_SESSION['role'] != 'admin') {
 // Cek method request
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ambil data dari form
-    $id_user = $_POST['id_user'];
+    $id_user = (int)$_POST['id_user'];
     $nama_lengkap = htmlspecialchars($_POST['nama_lengkap']);
     $email = htmlspecialchars($_POST['email']);
     $level = htmlspecialchars($_POST['level']);
@@ -27,32 +27,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: ../views/edit_user.php?id=$id_user&error=empty_fields");
         exit;
     }
-
+    
     // Validasi email
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         header("Location: ../views/edit_user.php?id=$id_user&error=invalid_email");
         exit;
     }
-
-    // Cek email sudah ada atau belum (kecuali email user itu sendiri)
+    
+    // Cek email sudah ada atau belum (kecuali email user yang sedang diedit)
     $check_email = "SELECT * FROM tabel_users WHERE email = '$email' AND id_user != $id_user";
     $email_result = mysqli_query($conn, $check_email);
-
+    
     if (mysqli_num_rows($email_result) > 0) {
         header("Location: ../views/edit_user.php?id=$id_user&error=email_exists");
         exit;
     }
-
-    // Update data user
+    
+    // Update data ke database
     $query = "UPDATE tabel_users SET 
               nama_lengkap = '$nama_lengkap', 
               email = '$email', 
               level = '$level' 
               WHERE id_user = $id_user";
-
+    
     if (mysqli_query($conn, $query)) {
         // Catat log aktivitas
-        $aktivitas = "Mengubah data pengguna dengan ID #$id_user";
+        $aktivitas = "Mengedit pengguna dengan ID #$id_user";
         $id_admin = $_SESSION['id_user'];
         mysqli_query($conn, "
             INSERT INTO tabel_log (id_user, aktivitas, created_at)
@@ -70,3 +70,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     header("Location: ../views/manage_users.php");
     exit;
 }
+?>
