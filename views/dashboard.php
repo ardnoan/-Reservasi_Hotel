@@ -265,7 +265,7 @@ if (isset($_GET['error'])) {
                                             <?php endif; ?>
 
                                             <!-- Cancel Button (hide for completed/cancelled reservations) -->
-                                            <?php if ($reservasi['status'] != 'cancelled' && $reservasi['status'] != 'checked_out'): ?>
+                                            <?php if ($reservasi['status'] != 'cancelled' && $reservasi['status'] != 'checked_out' && $reservasi['status_pembayaran'] != 'success'): ?>
                                                 <a href="../proses/proses_updatestatus.php?id=<?= $reservasi['id_reservasi'] ?>&status=cancelled"
                                                     class="btn btn-danger" title="Batalkan"
                                                     onclick="return confirm('Apakah Anda yakin ingin membatalkan reservasi ini?')">
