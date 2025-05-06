@@ -166,7 +166,7 @@ $total_pages = ceil($total_records / $limit);
                             <td class="actions">
                                 <a href="detail_reservasi.php?id=<?= $row['id_reservasi'] ?>" class="btn-small">Detail</a>
                                 <?php if ($row['status'] != 'checked_out' && $row['status'] != 'cancelled'): ?>
-                                <a href="../proses/delete_reservasi.php?id=<?= $row['id_reservasi'] ?>" class="btn-small btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus reservasi ini?')">Hapus</a>
+                                <a href="../proses/proses_delete_reservasi.php?id=<?= $row['id_reservasi'] ?>" class="btn-small btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus reservasi ini?')">Hapus</a>
                                 <?php endif; ?>
                             </td>
                         </tr>
