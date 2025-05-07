@@ -46,7 +46,7 @@ $query_jenis = mysqli_query($conn, "SELECT * FROM tabel_jenis_kamar ORDER BY nam
                 </div>
             <?php endif; ?>
 
-            <form action="../proses/tambah_kamar.php" method="POST">
+            <form action="../proses/proses_tambah_kamar.php" method="POST">
                 <div class="form-group">
                     <label for="nomor_kamar">Nomor Kamar</label>
                     <input type="text" id="nomor_kamar" name="nomor_kamar" required>

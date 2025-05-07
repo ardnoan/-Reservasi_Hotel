@@ -64,7 +64,7 @@ $query_jenis = mysqli_query($conn, "SELECT * FROM tabel_jenis_kamar ORDER BY nam
                 </div>
             <?php endif; ?>
 
-            <form action="../proses/update_kamar.php" method="POST">
+            <form action="../proses/proses_update_kamar.php" method="POST">
                 <input type="hidden" name="id_kamar" value="<?= $kamar['id_kamar'] ?>">
 
                 <div class="form-group">

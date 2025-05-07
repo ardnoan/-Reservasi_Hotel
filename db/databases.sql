@@ -116,3 +116,15 @@ id_log INT AUTO_INCREMENT PRIMARY KEY,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_user) REFERENCES users(id) ON DELETE CASCADE
 );
+-- SQL untuk membuat tabel_reservasi_kamar
+CREATE TABLE `tabel_reservasi_kamar` (
+  `id_reservasi_kamar` int(11) NOT NULL AUTO_INCREMENT,
+  `id_reservasi` int(11) NOT NULL,
+  `id_kamar` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_reservasi_kamar`),
+  KEY `id_reservasi` (`id_reservasi`),
+  KEY `id_kamar` (`id_kamar`),
+  CONSTRAINT `tabel_reservasi_kamar_ibfk_1` FOREIGN KEY (`id_reservasi`) REFERENCES `tabel_reservasi` (`id_reservasi`) ON DELETE CASCADE,
+  CONSTRAINT `tabel_reservasi_kamar_ibfk_2` FOREIGN KEY (`id_kamar`) REFERENCES `tabel_kamar` (`id_kamar`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -132,10 +132,8 @@ $query_jenis = mysqli_query($conn, "SELECT * FROM tabel_jenis_kamar ORDER BY nam
                 </form>
             </div>
 
-            <div class="action-buttons">
+            <div class="action-buttons" style="display: flex; justify-content: end">
                 <a href="tambah_kamar.php" class="btn btn-success">+ Tambah Kamar</a>
-                <a href="tambah_jenis_kamar.php" class="btn">+ Tambah Tipe Kamar</a>
-                <a href="manage_jenis_kamar.php" class="btn">Kelola Tipe Kamar</a>
             </div>
 
             <div class="reservation-table">
@@ -182,9 +180,9 @@ $query_jenis = mysqli_query($conn, "SELECT * FROM tabel_jenis_kamar ORDER BY nam
                                     <td><?= $row['lantai'] ?></td>
                                     <td class="actions">
                                         <a href="edit_kamar.php?id=<?= $row['id_kamar'] ?>" class="btn-small">Edit</a>
-                                        <a href="../proses/update_status_kamar.php?id=<?= $row['id_kamar'] ?>&status=tersedia" class="btn-small btn-success" onclick="return confirm('Set kamar ini sebagai tersedia?')">Set Tersedia</a>
-                                        <a href="../proses/update_status_kamar.php?id=<?= $row['id_kamar'] ?>&status=perbaikan" class="btn-small btn-warning" onclick="return confirm('Set kamar ini dalam perbaikan?')">Set Perbaikan</a>
-                                        <a href="../proses/delete_kamar.php?id=<?= $row['id_kamar'] ?>" class="btn-small btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus kamar ini?')">Hapus</a>
+                                        <a href="../proses/proses_update_status_kamar.php?id=<?= $row['id_kamar'] ?>&status=tersedia" class="btn-small btn-success" onclick="return confirm('Set kamar ini sebagai tersedia?')">Set Tersedia</a>
+                                        <a href="../proses/proses_update_status_kamar.php?id=<?= $row['id_kamar'] ?>&status=perbaikan" class="btn-small btn-warning" onclick="return confirm('Set kamar ini dalam perbaikan?')">Set Perbaikan</a>
+                                        <a href="../proses/proses_delete_kamar.php?id=<?= $row['id_kamar'] ?>" class="btn-small btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus kamar ini?')">Hapus</a>
                                     </td>
                                 </tr>
                             <?php
@@ -197,27 +195,6 @@ $query_jenis = mysqli_query($conn, "SELECT * FROM tabel_jenis_kamar ORDER BY nam
                         <?php endif; ?>
                     </tbody>
                 </table>
-            </div>
-
-            <!-- Pagination -->
-            <?php if ($total_pages > 1): ?>
-                <div class="pagination">
-                    <?php if ($page > 1): ?>
-                        <a href="?page=<?= $page - 1 ?><?= !empty($search) ? '&search=' . $search : '' ?><?= !empty($status_filter) ? '&status=' . $status_filter : '' ?><?= $jenis_filter > 0 ? '&jenis=' . $jenis_filter : '' ?>" class="pagination-item">← Prev</a>
-                    <?php endif; ?>
-
-                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <a href="?page=<?= $i ?><?= !empty($search) ? '&search=' . $search : '' ?><?= !empty($status_filter) ? '&status=' . $status_filter : '' ?><?= $jenis_filter > 0 ? '&jenis=' . $jenis_filter : '' ?>" class="pagination-item <?= $i == $page ? 'active' : '' ?>"><?= $i ?></a>
-                    <?php endfor; ?>
-
-                    <?php if ($page < $total_pages): ?>
-                        <a href="?page=<?= $page + 1 ?><?= !empty($search) ? '&search=' . $search : '' ?><?= !empty($status_filter) ? '&status=' . $status_filter : '' ?><?= $jenis_filter > 0 ? '&jenis=' . $jenis_filter : '' ?>" class="pagination-item">Next →</a>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
-
-            <div class="dashboard-actions">
-                <a href="dashboard.php" class="btn">Kembali ke Dashboard</a>
             </div>
         </div>
 

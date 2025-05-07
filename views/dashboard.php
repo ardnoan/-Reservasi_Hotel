@@ -114,7 +114,6 @@ if (isset($_GET['error'])) {
                 <a href="manage_kamar.php"><i class="fas fa-bed"></i> Kelola Kamar</a>
                 <?php if ($role == "admin"):?>
                     <a href="manage_users.php"><i class="fas fa-users"></i> Kelola Users</a>
-                    <a href="laporan.php"><i class="fas fa-chart-bar"></i> Laporan</a>
                 <?php endif; ?>
             </div>
 
