@@ -80,17 +80,8 @@ try {
         throw new Exception("Gagal memperbarui status pembayaran: " . mysqli_error($conn));
     }
 
-    // Jika status pembayaran berhasil (success), update status reservasi jadi confirmed
-    if ($status == 'success' && $reservation_status == 'pending') {
-        $update_reservasi = mysqli_query($conn, "
-            UPDATE tabel_reservasi
-            SET status = 'confirmed'
-            WHERE id_reservasi = $id_reservasi
-        ");
-        if (!$update_reservasi) {
-            throw new Exception("Gagal memperbarui status reservasi: " . mysqli_error($conn));
-        }
-    }
+    // REMOVED: Automatic reservation status update when payment succeeds
+    // Now, the staff must explicitly confirm the reservation after payment
 
     // Jika status pembayaran failed, update status reservasi jadi cancelled (kecuali sudah cancelled)
     if ($status == 'failed' && $reservation_status != 'cancelled') {

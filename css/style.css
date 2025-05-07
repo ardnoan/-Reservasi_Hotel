@@ -497,9 +497,6 @@ form {
 .payment-method {
   text-transform: capitalize;
 }
-.dashboard-container {
-  padding: 20px;
-}
 .dashboard-header {
   display: flex;
   justify-content: space-between;
@@ -649,6 +646,10 @@ form {
   width: 100%;
   border-collapse: collapse;
   margin-top: 15px;
+}
+.reservation-table table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .reservation-table th,

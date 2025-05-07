@@ -23,7 +23,7 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $id_user = (int)$_GET['id'];
 
 // Ambil data user
-$query = "SELECT * FROM tabel_users WHERE id_user = $id_user";
+$query = "SELECT * FROM users WHERE id = $id_user";
 $result = mysqli_query($conn, $query);
 
 if (mysqli_num_rows($result) == 0) {
@@ -59,12 +59,6 @@ $user = mysqli_fetch_assoc($result);
                         case 'empty_fields':
                             echo "Semua field harus diisi.";
                             break;
-                        case 'invalid_email':
-                            echo "Format email tidak valid.";
-                            break;
-                        case 'email_exists':
-                            echo "Email sudah digunakan oleh pengguna lain.";
-                            break;
                         case 'failed':
                             echo "Gagal memperbarui data pengguna.";
                             break;
@@ -76,7 +70,7 @@ $user = mysqli_fetch_assoc($result);
             <?php endif; ?>
 
             <form action="../proses/proses_edit_user.php" method="POST">
-                <input type="hidden" name="id_user" value="<?= $user['id_user'] ?>">
+                <input type="hidden" name="id_user" value="<?= $user['id'] ?>">
 
                 <div class="form-group">
                     <label for="username">Username</label>
@@ -90,23 +84,13 @@ $user = mysqli_fetch_assoc($result);
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" value="<?= $user['email'] ?>" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="level">Level</label>
-                    <select id="level" name="level" required>
-                        <option value="admin" <?= $user['level'] == 'admin' ? 'selected' : '' ?>>Admin</option>
-                        <option value="resepsionis" <?= $user['level'] == 'resepsionis' ? 'selected' : '' ?>>Resepsionis</option>
-                        <option value="manager" <?= $user['level'] == 'manager' ? 'selected' : '' ?>>Manager</option>
+                    <label for="role">Role</label>
+                    <select id="role" name="role" required>
+                        <option value="admin" <?= $user['role'] == 'admin' ? 'selected' : '' ?>>Admin</option>
+                        <option value="resepsionis" <?= $user['role'] == 'resepsionis' ? 'selected' : '' ?>>Resepsionis</option>
+                        <option value="manager" <?= $user['role'] == 'manager' ? 'selected' : '' ?>>Manager</option>
+                        <option value="staff" <?= $user['role'] == 'staff' ? 'selected' : '' ?>>Staff</option>
                     </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="status">Status</label>
-                    <input type="text" id="status" value="<?= ucfirst($user['status']) ?>" readonly class="readonly">
-                    <small>Status dapat diubah melalui halaman kelola pengguna</small>
                 </div>
 
                 <div class="form-group">

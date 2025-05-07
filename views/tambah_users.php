@@ -46,9 +46,6 @@ if ($_SESSION['role'] != 'admin') {
                         case 'username_exists':
                             echo "Username sudah digunakan.";
                             break;
-                        case 'email_exists':
-                            echo "Email sudah digunakan.";
-                            break;
                         case 'failed':
                             echo "Gagal menambahkan pengguna.";
                             break;
@@ -77,17 +74,13 @@ if ($_SESSION['role'] != 'admin') {
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="level">Level</label>
+                    <label for="level">Role</label>
                     <select id="level" name="level" required>
                         <option value="">-- Pilih Level --</option>
                         <option value="admin">Admin</option>
                         <option value="resepsionis">Resepsionis</option>
                         <option value="manager">Manager</option>
+                        <option value="staff">Staff</option>
                     </select>
                 </div>
 
