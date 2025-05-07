@@ -59,41 +59,33 @@ $total_pages = ceil($total_records / $limit);
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Reservasi - Hotel Reservation System</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
+
 <body>
     <div class="container">
-        <div class="navbar">
-            <div class="logo">Hotel Reservation System</div>
-            <div class="nav-links">
-                <a href="../index.php">Home</a>
-                <a href="kamar.php">Kamar</a>
-                <a href="reservasi.php">Reservasi</a>
-                <a href="cek_reservasi.php">Cek Reservasi</a>
-                <a href="dashboard.php">Dashboard</a>
-                <a href="../logout.php">Logout</a>
-            </div>
-        </div>
-        
+        <?php include '../components/navbar.php'; ?>
+
         <div class="dashboard-container">
             <h2>Kelola Reservasi</h2>
-            
+
             <?php if (isset($_GET['success'])): ?>
-            <div class="alert alert-success">
-                <?php if ($_GET['success'] == 'deleted'): ?>
-                Reservasi berhasil dihapus.
-                <?php elseif ($_GET['success'] == 'updated'): ?>
-                Reservasi berhasil diperbarui.
-                <?php else: ?>
-                Operasi berhasil dilakukan.
-                <?php endif; ?>
-            </div>
+                <div class="alert alert-success">
+                    <?php if ($_GET['success'] == 'deleted'): ?>
+                        Reservasi berhasil dihapus.
+                    <?php elseif ($_GET['success'] == 'updated'): ?>
+                        Reservasi berhasil diperbarui.
+                    <?php else: ?>
+                        Operasi berhasil dilakukan.
+                    <?php endif; ?>
+                </div>
             <?php endif; ?>
-            
+
             <div class="filters">
                 <form action="" method="GET" class="search-form">
                     <div class="form-group">
@@ -113,7 +105,7 @@ $total_pages = ceil($total_records / $limit);
                     <a href="manage_reservasi.php" class="btn">Reset</a>
                 </form>
             </div>
-            
+
             <div class="reservation-table">
                 <table class="data-table">
                     <thead>
@@ -135,102 +127,74 @@ $total_pages = ceil($total_records / $limit);
                         if (mysqli_num_rows($result) > 0):
                             while ($row = mysqli_fetch_assoc($result)):
                         ?>
-                        <tr>
-                            <td><?= $no++ ?></td>
-                            <td><?= $row['kode_booking'] ?></td>
-                            <td><?= $row['nama_tamu'] ?></td>
-                            <td><?= date('d/m/Y', strtotime($row['tanggal_checkin'])) ?></td>
-                            <td><?= date('d/m/Y', strtotime($row['tanggal_checkout'])) ?></td>
-                            <td>
-                                <?php
-                                switch ($row['status']) {
-                                    case 'pending':
-                                        echo '<span class="status-pending">Menunggu Konfirmasi</span>';
-                                        break;
-                                    case 'confirmed':
-                                        echo '<span class="status-confirmed">Terkonfirmasi</span>';
-                                        break;
-                                    case 'checked_in':
-                                        echo '<span class="status-checked-in">Check-in</span>';
-                                        break;
-                                    case 'checked_out':
-                                        echo '<span class="status-checked-out">Check-out</span>';
-                                        break;
-                                    case 'cancelled':
-                                        echo '<span class="status-cancelled">Dibatalkan</span>';
-                                        break;
-                                }
-                                ?>
-                            </td>
-                            <td>Rp <?= number_format($row['total_harga'], 0, ',', '.') ?></td>
-                            <td><?= date('d/m/Y H:i', strtotime($row['created_at'])) ?></td>
-                            <td class="actions">
-                                <a href="detail_reservasi.php?id=<?= $row['id_reservasi'] ?>" class="btn-small">Detail</a>
-                                <?php if ($row['status'] != 'checked_out' && $row['status'] != 'cancelled'): ?>
-                                <a href="../proses/proses_delete_reservasi.php?id=<?= $row['id_reservasi'] ?>" class="btn-small btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus reservasi ini?')">Hapus</a>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                        <?php
+                                <tr>
+                                    <td><?= $no++ ?></td>
+                                    <td><?= $row['kode_booking'] ?></td>
+                                    <td><?= $row['nama_tamu'] ?></td>
+                                    <td><?= date('d/m/Y', strtotime($row['tanggal_checkin'])) ?></td>
+                                    <td><?= date('d/m/Y', strtotime($row['tanggal_checkout'])) ?></td>
+                                    <td>
+                                        <?php
+                                        switch ($row['status']) {
+                                            case 'pending':
+                                                echo '<span class="status-pending">Menunggu Konfirmasi</span>';
+                                                break;
+                                            case 'confirmed':
+                                                echo '<span class="status-confirmed">Terkonfirmasi</span>';
+                                                break;
+                                            case 'checked_in':
+                                                echo '<span class="status-checked-in">Check-in</span>';
+                                                break;
+                                            case 'checked_out':
+                                                echo '<span class="status-checked-out">Check-out</span>';
+                                                break;
+                                            case 'cancelled':
+                                                echo '<span class="status-cancelled">Dibatalkan</span>';
+                                                break;
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>Rp <?= number_format($row['total_harga'], 0, ',', '.') ?></td>
+                                    <td><?= date('d/m/Y H:i', strtotime($row['created_at'])) ?></td>
+                                    <td class="actions">
+                                        <a href="detail_reservasi.php?id=<?= $row['id_reservasi'] ?>" class="btn-small">Detail</a>
+                                        <?php if ($row['status'] != 'checked_out' && $row['status'] != 'cancelled'): ?>
+                                            <a href="../proses/proses_delete_reservasi.php?id=<?= $row['id_reservasi'] ?>" class="btn-small btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus reservasi ini?')">Hapus</a>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php
                             endwhile;
                         else:
-                        ?>
-                        <tr>
-                            <td colspan="9" class="text-center">Tidak ada data reservasi.</td>
-                        </tr>
+                            ?>
+                            <tr>
+                                <td colspan="9" class="text-center">Tidak ada data reservasi.</td>
+                            </tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
             </div>
-            
+
             <!-- Pagination -->
             <?php if ($total_pages > 1): ?>
-            <div class="pagination">
-                <?php if ($page > 1): ?>
-                <a href="?page=<?= $page - 1 ?><?= !empty($search) ? '&search='.$search : '' ?><?= !empty($status_filter) ? '&status='.$status_filter : '' ?>" class="pagination-item">← Prev</a>
-                <?php endif; ?>
-                
-                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                <a href="?page=<?= $i ?><?= !empty($search) ? '&search='.$search : '' ?><?= !empty($status_filter) ? '&status='.$status_filter : '' ?>" class="pagination-item <?= $i == $page ? 'active' : '' ?>"><?= $i ?></a>
-                <?php endfor; ?>
-                
-                <?php if ($page < $total_pages): ?>
-                <a href="?page=<?= $page + 1 ?><?= !empty($search) ? '&search='.$search : '' ?><?= !empty($status_filter) ? '&status='.$status_filter : '' ?>" class="pagination-item">Next →</a>
-                <?php endif; ?>
-            </div>
+                <div class="pagination">
+                    <?php if ($page > 1): ?>
+                        <a href="?page=<?= $page - 1 ?><?= !empty($search) ? '&search=' . $search : '' ?><?= !empty($status_filter) ? '&status=' . $status_filter : '' ?>" class="pagination-item">← Prev</a>
+                    <?php endif; ?>
+
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <a href="?page=<?= $i ?><?= !empty($search) ? '&search=' . $search : '' ?><?= !empty($status_filter) ? '&status=' . $status_filter : '' ?>" class="pagination-item <?= $i == $page ? 'active' : '' ?>"><?= $i ?></a>
+                    <?php endfor; ?>
+
+                    <?php if ($page < $total_pages): ?>
+                        <a href="?page=<?= $page + 1 ?><?= !empty($search) ? '&search=' . $search : '' ?><?= !empty($status_filter) ? '&status=' . $status_filter : '' ?>" class="pagination-item">Next →</a>
+                    <?php endif; ?>
+                </div>
             <?php endif; ?>
         </div>
-        
-        <footer>
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Hotel Reservation System</h3>
-                    <p>Jl. Hotel Indah No. 123, Kota</p>
-                    <p>Telepon: (021) 1234-5678</p>
-                    <p>Email: info@hotelreservation.com</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Link</h3>
-                    <ul>
-                        <li><a href="../index.php">Home</a></li>
-                        <li><a href="kamar.php">Kamar</a></li>
-                        <li><a href="reservasi.php">Reservasi</a></li>
-                        <li><a href="cek_reservasi.php">Cek Reservasi</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Sosial Media</h3>
-                    <div class="social-links">
-                        <a href="#">Facebook</a>
-                        <a href="#">Instagram</a>
-                        <a href="#">Twitter</a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Hotel Reservation System. All Rights Reserved.</p>
-            </div>
-        </footer>
+        <?php include '../components/footer.php'; ?>
+
     </div>
 </body>
+
 </html>

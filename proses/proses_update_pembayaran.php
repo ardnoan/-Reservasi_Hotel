@@ -87,9 +87,20 @@ try {
             SET status = 'confirmed'
             WHERE id_reservasi = $id_reservasi
         ");
-        
         if (!$update_reservasi) {
             throw new Exception("Gagal memperbarui status reservasi: " . mysqli_error($conn));
+        }
+    }
+
+    // Jika status pembayaran failed, update status reservasi jadi cancelled (kecuali sudah cancelled)
+    if ($status == 'failed' && $reservation_status != 'cancelled') {
+        $update_reservasi = mysqli_query($conn, "
+            UPDATE tabel_reservasi
+            SET status = 'cancelled'
+            WHERE id_reservasi = $id_reservasi
+        ");
+        if (!$update_reservasi) {
+            throw new Exception("Gagal membatalkan reservasi: " . mysqli_error($conn));
         }
     }
 

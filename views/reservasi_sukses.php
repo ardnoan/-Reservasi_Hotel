@@ -56,68 +56,129 @@ $jumlah_hari = $interval->days;
 <body>
     <div class="container">
         <?php include '../components/navbar.php'; ?>
-        <div class="reservation-details">
-            <h3>Detail Reservasi</h3>
-            <div class="detail-grid">
-                <div class="detail-item">
-                    <div class="detail-label">Nama Tamu:</div>
-                    <div class="detail-value"><?= $tamu['nama_tamu'] ?></div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Email:</div>
-                    <div class="detail-value"><?= $tamu['email'] ?></div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Tanggal Check-in:</div>
-                    <div class="detail-value"><?= date('d F Y', strtotime($reservasi['tanggal_checkin'])) ?></div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Tanggal Check-out:</div>
-                    <div class="detail-value"><?= date('d F Y', strtotime($reservasi['tanggal_checkout'])) ?></div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Lama Menginap:</div>
-                    <div class="detail-value"><?= $jumlah_hari ?> malam</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Tipe Kamar:</div>
-                    <div class="detail-value"><?= $detail['nama_jenis'] ?></div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Nomor Kamar:</div>
-                    <div class="detail-value"><?= $detail['nomor_kamar'] ?></div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Jumlah Tamu:</div>
-                    <div class="detail-value"><?= $reservasi['jumlah_tamu'] ?> orang</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Total Harga:</div>
-                    <div class="detail-value">Rp <?= number_format($reservasi['total_harga'], 0, ',', '.') ?></div>
-                </div>
-            </div>
 
-            <div class="payment-info">
-                <h3>Informasi Pembayaran</h3>
-                <p>Silakan lakukan pembayaran melalui transfer bank ke rekening berikut:</p>
-                <div class="bank-details">
-                    <p><strong>Bank ABC</strong></p>
-                    <p>No. Rekening: 1234-5678-9012</p>
-                    <p>Atas nama: Hotel Reservation System</p>
+        <div class="dashboard-container">
+            <h2>Reservasi Berhasil!</h2>
+            <div class="detail-container">
+                <div class="detail-header">
+                    <div>
+                        <h3>Kode Booking: <?= $reservasi['kode_booking'] ?></h3>
+                        <p>Status:
+                            <?php
+                            switch ($reservasi['status']) {
+                                case 'pending':
+                                    echo '<span class="status-pending">Menunggu Pembayaran</span>';
+                                    break;
+                                case 'confirmed':
+                                    echo '<span class="status-confirmed">Terkonfirmasi</span>';
+                                    break;
+                                case 'checked_in':
+                                    echo '<span class="status-checked-in">Check-in</span>';
+                                    break;
+                                case 'checked_out':
+                                    echo '<span class="status-checked-out">Check-out</span>';
+                                    break;
+                                case 'cancelled':
+                                    echo '<span class="status-cancelled">Dibatalkan</span>';
+                                    break;
+                            }
+                            ?>
+                        </p>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="javascript:window.print()" class="btn">Cetak</a>
+                        <a href="cek_reservasi.php?kode_booking=<?= $kode_booking ?>" class="btn">Lihat Detail</a>
+                        <a href="../index.php" class="btn">Kembali ke Home</a>
+                    </div>
                 </div>
-                <p>Jumlah yang harus dibayar: <strong>Rp <?= number_format($reservasi['total_harga'], 0, ',', '.') ?></strong></p>
-                <p>Mohon sertakan kode booking <strong><?= $kode_booking ?></strong> pada keterangan transfer.</p>
-                <p>Batas waktu pembayaran: <strong><?= date('d F Y H:i', strtotime('+24 hours', strtotime($reservasi['created_at']))) ?></strong></p>
-            </div>
 
-            <div class="note">
-                <p><strong>Note:</strong> Pembayaran harus dilakukan dalam waktu 24 jam setelah reservasi dibuat, atau reservasi akan otomatis dibatalkan.</p>
-            </div>
+                <div class="detail-content">
+                    <div class="detail-section">
+                        <h3>Detail Reservasi</h3>
+                        <div class="detail-item">
+                            <div class="detail-label">Tanggal Check-in:</div>
+                            <div class="detail-value"><?= date('d F Y', strtotime($reservasi['tanggal_checkin'])) ?></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Tanggal Check-out:</div>
+                            <div class="detail-value"><?= date('d F Y', strtotime($reservasi['tanggal_checkout'])) ?></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Lama Menginap:</div>
+                            <div class="detail-value"><?= $jumlah_hari ?> malam</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Jumlah Tamu:</div>
+                            <div class="detail-value"><?= $reservasi['jumlah_tamu'] ?> orang</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Total Harga:</div>
+                            <div class="detail-value">Rp <?= number_format($reservasi['total_harga'], 0, ',', '.') ?></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Tanggal Pemesanan:</div>
+                            <div class="detail-value"><?= date('d F Y H:i', strtotime($reservasi['created_at'])) ?></div>
+                        </div>
+                    </div>
 
-            <div class="buttons">
-                <a href="javascript:window.print()" class="btn">Cetak</a>
-                <a href="cek_reservasi.php?kode_booking=<?= $kode_booking ?>" class="btn">Lihat Detail</a>
-                <a href="../index.php" class="btn">Kembali ke Home</a>
+                    <div class="detail-section">
+                        <h3>Data Tamu</h3>
+                        <div class="detail-item">
+                            <div class="detail-label">Nama Tamu:</div>
+                            <div class="detail-value"><?= $tamu['nama_tamu'] ?></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Email:</div>
+                            <div class="detail-value"><?= $tamu['email'] ?></div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Detail Kamar</h3>
+                        <div class="room-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Tipe Kamar:</div>
+                                <div class="detail-value"><?= $detail['nama_jenis'] ?></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Nomor Kamar:</div>
+                                <div class="detail-value"><?= $detail['nomor_kamar'] ?></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Informasi Pembayaran</h3>
+                        <div class="detail-item">
+                            <div class="detail-label">Bank:</div>
+                            <div class="detail-value"><strong>Bank ABC</strong></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">No. Rekening:</div>
+                            <div class="detail-value">1234-5678-9012</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Atas Nama:</div>
+                            <div class="detail-value">Hotel Reservation System</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Jumlah yang harus dibayar:</div>
+                            <div class="detail-value"><strong>Rp <?= number_format($reservasi['total_harga'], 0, ',', '.') ?></strong></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Kode Booking untuk Transfer:</div>
+                            <div class="detail-value"><strong><?= $kode_booking ?></strong></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Batas Waktu Pembayaran:</div>
+                            <div class="detail-value"><strong><?= date('d F Y H:i', strtotime('+24 hours', strtotime($reservasi['created_at']))) ?></strong></div>
+                        </div>
+                    </div>
+
+                    <div class="note">
+                        <p><strong>Note:</strong> Pembayaran harus dilakukan dalam waktu 24 jam setelah reservasi dibuat, atau reservasi akan otomatis dibatalkan.</p>
+                    </div>
+                </div>
             </div>
         </div>
 

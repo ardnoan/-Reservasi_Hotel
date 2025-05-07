@@ -106,13 +106,27 @@ $jumlah_hari = $interval->days;
                     </div>
                     <div class="action-buttons">
                         <?php if ($reservasi['status'] == 'pending'): ?>
-                            <a href="../proses/update_status.php?id=<?= $id_reservasi ?>&status=confirmed" class="btn btn-success">Konfirmasi</a>
-                            <a href="../proses/update_status.php?id=<?= $id_reservasi ?>&status=cancelled" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin membatalkan reservasi ini?')">Batalkan</a>
+                            <?php if ($pembayaran['status_pembayaran'] == 'success'): ?>
+                                <!-- Konfirmasi hanya jika pembayaran sukses -->
+                                <a href="../proses/proses_updatestatus.php?id=<?= $id_reservasi ?>&status=confirmed" class="btn btn-success">Konfirmasi</a>
+                            <?php else: ?>
+                                <!-- Tombol konfirmasi disabled jika pembayaran belum sukses -->
+                                <a href="javascript:void(0)" class="btn btn-secondary disabled" title="Pembayaran harus diselesaikan sebelum konfirmasi">Konfirmasi</a>
+                            <?php endif; ?>
+                            <?php if ($pembayaran['status_pembayaran'] != 'success'): ?>
+                                <a href="../proses/proses_updatestatus.php?id=<?= $id_reservasi ?>&status=cancelled" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin membatalkan reservasi ini?')">Batalkan</a>
+                            <?php endif; ?>
                         <?php elseif ($reservasi['status'] == 'confirmed'): ?>
-                            <a href="../proses/update_status.php?id=<?= $id_reservasi ?>&status=checked_in" class="btn btn-success">Check-in</a>
-                            <a href="../proses/update_status.php?id=<?= $id_reservasi ?>&status=cancelled" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin membatalkan reservasi ini?')">Batalkan</a>
+                            <?php if ($pembayaran['status_pembayaran'] == 'success'): ?>
+                                <a href="../proses/proses_updatestatus.php?id=<?= $id_reservasi ?>&status=checked_in" class="btn btn-success">Check-in</a>
+                            <?php else: ?>
+                                <a href="javascript:void(0)" class="btn btn-secondary disabled" title="Pembayaran harus diselesaikan sebelum check-in">Check-in</a>
+                            <?php endif; ?>
+                            <?php if ($pembayaran['status_pembayaran'] != 'success'): ?>
+                                <a href="../proses/proses_updatestatus.php?id=<?= $id_reservasi ?>&status=cancelled" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin membatalkan reservasi ini?')">Batalkan</a>
+                            <?php endif; ?>
                         <?php elseif ($reservasi['status'] == 'checked_in'): ?>
-                            <a href="../proses/update_status.php?id=<?= $id_reservasi ?>&status=checked_out" class="btn btn-success">Check-out</a>
+                            <a href="../proses/proses_updatestatus.php?id=<?= $id_reservasi ?>&status=checked_out" class="btn btn-success">Check-out</a>
                         <?php endif; ?>
                         <a href="javascript:window.print()" class="btn">Cetak</a>
                     </div>
@@ -245,8 +259,8 @@ $jumlah_hari = $interval->days;
 
                             <?php if ($pembayaran['status_pembayaran'] == 'pending'): ?>
                                 <div class="payment-actions">
-                                    <a href="../proses/update_pembayaran.php?id=<?= $pembayaran['id_pembayaran'] ?>&status=success" class="btn btn-success" onclick="return confirm('Konfirmasi pembayaran sebagai berhasil?')">Konfirmasi Pembayaran</a>
-                                    <a href="../proses/update_pembayaran.php?id=<?= $pembayaran['id_pembayaran'] ?>&status=failed" class="btn btn-danger" onclick="return confirm('Tandai pembayaran sebagai gagal?')">Tolak Pembayaran</a>
+                                    <a href="../proses/proses_update_pembayaran.php?id=<?= $pembayaran['id_pembayaran'] ?>&status=success" class="btn btn-success" onclick="return confirm('Konfirmasi pembayaran sebagai berhasil?')">Konfirmasi Pembayaran</a>
+                                    <a href="../proses/proses_update_pembayaran.php?id=<?= $pembayaran['id_pembayaran'] ?>&status=failed" class="btn btn-danger" onclick="return confirm('Tandai pembayaran sebagai gagal?')">Tolak Pembayaran</a>
                                 </div>
                             <?php endif; ?>
                         </div>

@@ -110,6 +110,16 @@ try {
     if (!$query_update) {
         throw new Exception("Failed to update reservation status: " . mysqli_error($conn));
     }
+
+    // Jika status dibatalkan, update status pembayaran jadi failed (kecuali sudah success/failed)
+    if ($status == 'cancelled') {
+        $update_pembayaran = mysqli_query($conn, "
+            UPDATE tabel_pembayaran
+            SET status_pembayaran = 'failed'
+            WHERE id_reservasi = $id_reservasi AND status_pembayaran NOT IN ('success','failed')
+        ");
+        // Tidak perlu throw error jika tidak ada baris yang diupdate
+    }
    
     // Update status kamar jika diperlukan
     if ($status == 'cancelled') {
