@@ -87,8 +87,6 @@ $user = mysqli_fetch_assoc($result);
                     <label for="role">Role</label>
                     <select id="role" name="role" required>
                         <option value="admin" <?= $user['role'] == 'admin' ? 'selected' : '' ?>>Admin</option>
-                        <option value="resepsionis" <?= $user['role'] == 'resepsionis' ? 'selected' : '' ?>>Resepsionis</option>
-                        <option value="manager" <?= $user['role'] == 'manager' ? 'selected' : '' ?>>Manager</option>
                         <option value="staff" <?= $user['role'] == 'staff' ? 'selected' : '' ?>>Staff</option>
                     </select>
                 </div>

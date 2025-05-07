@@ -78,8 +78,6 @@ if ($_SESSION['role'] != 'admin') {
                     <select id="level" name="level" required>
                         <option value="">-- Pilih Level --</option>
                         <option value="admin">Admin</option>
-                        <option value="resepsionis">Resepsionis</option>
-                        <option value="manager">Manager</option>
                         <option value="staff">Staff</option>
                     </select>
                 </div>

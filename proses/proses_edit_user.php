@@ -17,20 +17,20 @@ if ($_SESSION['role'] != 'admin') {
 // Cek method request
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ambil data dari form
-    $id_user = (int)$_POST['id'];
+    $id_user = (int)$_POST['id_user'];
     $nama_lengkap = htmlspecialchars($_POST['nama_lengkap']);
-    $level = htmlspecialchars($_POST['level']);
+    $role = htmlspecialchars($_POST['role']);
     
     // Validasi data
-    if (empty($nama_lengkap) || empty($level)) {
-        header("Location: ../views/edit_user.php?id=$id_user&error=empty_fields");
+    if (empty($nama_lengkap) || empty($role)) {
+        header("Location: ../views/edit_users.php?id=$id_user&error=empty_fields");
         exit;
     }
     
     // Update data ke database
     $query = "UPDATE users SET 
               nama_lengkap = '$nama_lengkap', 
-              role = '$level' 
+              role = '$role' 
               WHERE id = $id_user";
     
     if (mysqli_query($conn, $query)) {
@@ -38,14 +38,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $aktivitas = "Mengedit pengguna dengan ID #$id_user";
         $id_admin = $_SESSION['user_id'];
         mysqli_query($conn, "
-            INSERT INTO tabel_log (id, aktivitas, created_at)
+            INSERT INTO tabel_log (id_user, aktivitas, created_at)
             VALUES ($id_admin, '$aktivitas', NOW())
         ");
         
         header("Location: ../views/manage_users.php?success=updated");
         exit;
     } else {
-        header("Location: ../views/edit_user.php?id=$id_user&error=failed");
+        header("Location: ../views/edit_users.php?id=$id_user&error=failed");
         exit;
     }
 } else {

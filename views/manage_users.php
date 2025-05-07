@@ -35,13 +35,13 @@ if (!empty($search)) {
     $query .= " AND (
         username LIKE '%$search%' OR 
         nama_lengkap LIKE '%$search%' OR 
-        email LIKE '%$search%'
+        role LIKE '%$search%'
     )";
 }
 
 // Add level filter
 if (!empty($level_filter)) {
-    $query .= " AND level = '$level_filter'";
+    $query .= " AND role = '$level_filter'";
 }
 
 // Query to count total records
@@ -73,6 +73,15 @@ $total_pages = ceil($total_records / $limit);
             padding: 10px;
             text-align: left;
             border: 1px solid #ddd;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #bd2130;
         }
     </style>
 </head>
@@ -116,14 +125,13 @@ $total_pages = ceil($total_records / $limit);
             <div class="filters">
                 <form action="" method="GET" class="search-form">
                     <div class="form-group">
-                        <input type="text" name="search" placeholder="Cari username, nama, email..." value="<?= htmlspecialchars($search) ?>">
+                        <input type="text" name="search" placeholder="Cari username, nama..." value="<?= htmlspecialchars($search) ?>">
                     </div>
                     <div class="form-group">
-                        <select name="level">
+                        <select name="role">
                             <option value="">-- Semua Level --</option>
                             <option value="admin" <?= $level_filter == 'admin' ? 'selected' : '' ?>>Admin</option>
-                            <option value="resepsionis" <?= $level_filter == 'resepsionis' ? 'selected' : '' ?>>Resepsionis</option>
-                            <option value="manager" <?= $level_filter == 'manager' ? 'selected' : '' ?>>Manager</option>
+                            <option value="staff" <?= $level_filter == 'staff' ? 'selected' : '' ?>>Staff</option>
                         </select>
                     </div>
                     <button type="submit" class="btn">Filter</button>
@@ -160,6 +168,7 @@ $total_pages = ceil($total_records / $limit);
                                     <td class="actions">
                                         <a href="edit_users.php?id=<?= $row['id'] ?>" class="btn-small">Edit</a>
                                         <a href="../proses/reset_password.php?id=<?= $row['id'] ?>" class="btn-small btn-warning" onclick="return confirm('Reset password pengguna ini?')">Reset Password</a>
+                                        <a href="../proses/proses_delete_user.php?id=<?= $row['id'] ?>" class="btn-small btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')">Hapus</a>
                                     </td>
                                 </tr>
                             <?php
@@ -173,23 +182,6 @@ $total_pages = ceil($total_records / $limit);
                     </tbody>
                 </table>
             </div>
-
-            <!-- Pagination -->
-            <?php if ($total_pages > 1): ?>
-                <div class="pagination">
-                    <?php if ($page > 1): ?>
-                        <a href="?page=<?= $page - 1 ?><?= !empty($search) ? '&search=' . $search : '' ?><?= !empty($level_filter) ? '&level=' . $level_filter : '' ?>" class="pagination-item">← Prev</a>
-                    <?php endif; ?>
-
-                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <a href="?page=<?= $i ?><?= !empty($search) ? '&search=' . $search : '' ?><?= !empty($level_filter) ? '&level=' . $level_filter : '' ?>" class="pagination-item <?= $i == $page ? 'active' : '' ?>"><?= $i ?></a>
-                    <?php endfor; ?>
-
-                    <?php if ($page < $total_pages): ?>
-                        <a href="?page=<?= $page + 1 ?><?= !empty($search) ? '&search=' . $search : '' ?><?= !empty($level_filter) ? '&level=' . $level_filter : '' ?>" class="pagination-item">Next →</a>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
         </div>
         <?php include '../components/footer.php'; ?>
 
